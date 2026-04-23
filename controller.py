@@ -56,7 +56,7 @@ class DynamicBlock(app_manager.RyuApp):
         in_port = msg.match['in_port']
         self.mac_to_port[dpid][src] = in_port
 
-        # ⏱️ Track packet timestamps
+        #  Track packet timestamps
         now = time.time()
         self.packet_log.setdefault(src, [])
         self.packet_log[src].append(now)
@@ -67,9 +67,9 @@ class DynamicBlock(app_manager.RyuApp):
             if now - t <= TIME_WINDOW
         ]
 
-        # 🚫 Dynamic Blocking Condition
+        #  Dynamic Blocking Condition
         if len(self.packet_log[src]) > THRESHOLD and src not in self.blocked_hosts:
-            self.logger.info(f"🚫 Blocking host {src}")
+            self.logger.info(f"Blocking host {src}")
 
             match = parser.OFPMatch(eth_src=src)
             actions = []  # DROP
@@ -78,7 +78,7 @@ class DynamicBlock(app_manager.RyuApp):
             self.blocked_hosts.add(src)
             return
 
-        # 🔁 Normal forwarding (learning switch)
+        # Normal forwarding (learning switch)
         if dst in self.mac_to_port[dpid]:
             out_port = self.mac_to_port[dpid][dst]
         else:
